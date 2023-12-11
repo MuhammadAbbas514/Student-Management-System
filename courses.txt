@@ -1,0 +1,4 @@
+3
+MT		Differential-Equation		Hina Dilawar		3		50
+CS		Digital-logic-Design		Mehmoona Akram		3		50
+EE		Applied-Physics		Faizan Saleem		2		50
