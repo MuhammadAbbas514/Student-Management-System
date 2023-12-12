@@ -1,20 +1,20 @@
 #pragma once
-#ifndef S_H
-#define S_H
+#ifndef s_h
+#define s_h
 #include<iostream>
-#include"Filehandler.h"
+#include"filehandler.h"
 #include"c.h";
 using namespace std;
 class Help
 {
 public:
-	static int StrLength(string ch)
+	static int strlength(string ch)
 	{
 		int i = 0;
 		for (; ch[i] != '\0'; i++);
 		return i;
 	}
-	static void strCopy(char* des, string src)
+	static void strcopy(char* des, string src)
 	{
 		int i;
 		for (i = 0; src[i] != '\0'; i++)
@@ -25,9 +25,9 @@ public:
 	}
 	static char* GetStrFromBuffer(string arr)
 	{
-		int n = StrLength(arr);
+		int n = strlength(arr);
 		char* temp = new char[n];
-		strCopy(temp, arr);
+		strcopy(temp, arr);
 		return temp;
 	}
 	static bool searchstr(char* str, const char*& substr)
@@ -62,7 +62,7 @@ private:
 	string roll_num;
 	int age;
 	long long contact;
-	//Course* courses;
+	//course* courses;
 	char* attendance;
 	int totalAttendance;
 	int* marks;
@@ -70,7 +70,7 @@ private:
 public:
 	friend class FileHandler;
 	Student();
-	Student(string n , string r , int a, long long c , /*Course* co = 0,*/ char* att, int* m , int t , string code);
+	Student(string n, string r, int a, long long c, char* att, int* m, int t, int t1, string code);
 	void MarkAttendance(string code);
 	void AssignMarks(string code);
 	Student(const Student& obj)
@@ -114,14 +114,7 @@ public:
 		out << obj.name << "\t\t";
 		out << obj.age << "\t\t";
 		out << obj.roll_num << "\t\t";
-		out << obj.contact << endl;
-	}
-	void readfromfile(string n = " ", string r = " ", int a = 0, long long c = 0)
-	{
-		name = n;
-		roll_num = r;
-		age = a;
-		contact = c;
+		out << obj.contact << "\n\n";
 	}
 	string getname()
 	{
@@ -143,6 +136,10 @@ public:
 	{
 		return totalAttendance;
 	}
+	int getTotalmarks()
+	{
+		return totalmarks;
+	}
 	void setattendance(int t)
 	{
 		totalAttendance = t;
@@ -152,27 +149,36 @@ public:
 			attendance[i] = '_';
 		}
 	}
+	void setmarks(int t)
+	{
+		totalmarks = t;
+		marks = new int[totalmarks];
+		for (int i = 0; i < totalmarks; i++)
+		{
+			marks[i] = 404;
+		}
+	}
 	void updateStudent()
 	{
 		string a, b;
-		cout << "\n\"Enter the updated detail of student\"\n\n";
-		cout << "Enter first name = ";
+		cout << "\n\"enter the updated detail of student\"\n\n";
+		cout << "enter first name = ";
 		cin >> a;
-		cout << "Enter last name = ";
+		cout << "enter last name = ";
 		cin >> b;
 		name = a + " " + b;
-		cout << "Enter Roll num = ";
+		cout << "enter roll num = ";
 		cin >> roll_num;
-		cout << "Enter age = ";
+		cout << "enter age = ";
 		cin >> age;
-		cout << "Enter the contact = ";
+		cout << "enter the contact = ";
 		cin >> contact;
 	}
 	void DisplayAttendance()
 	{
 		if (totalAttendance == 0)
 		{
-			cout << "There hasn't been any session held for the class to date!!!\n";
+			cout << "there hasn't been any session held for the class to date!!!\n";
 		}
 		else
 		{
@@ -191,7 +197,7 @@ public:
 	{
 		if (totalmarks == 0)
 		{
-			cout << "There hasn't been any session held for the class to date!!!\n";
+			cout << "there hasn't been any session held for the class to date!!!\n";
 		}
 		else
 		{

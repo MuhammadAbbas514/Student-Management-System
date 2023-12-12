@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="D:\22l6586.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -41,10 +38,10 @@
     <ClInclude Include="Filehandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="s.h">
+    <ClInclude Include="c.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="c.h">
+    <ClInclude Include="Stu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

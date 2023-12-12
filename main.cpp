@@ -1,15 +1,32 @@
 #include<iostream>
 #include<fstream>
 #include<string>
+#include<Windows.h>
 #include"Filehandler.h"
 #include"c.h"
-#include"s.h"
+#include"Stu.h"
 #include<stdio.h>
 using namespace std;
 
 class Course;
 class Student;
 class Filehandler;
+bool checkrollnum(string r)
+{
+	if (r.length() != 8)
+	{
+		return true;
+	}
+	if (r[2] != 'L')
+	{
+		return true;
+	}
+	if (r[3] != '-')
+	{
+		return true;
+	}
+	return false;
+}
 Student::Student()
 {
 	name = "";
@@ -22,18 +39,21 @@ Student::Student()
 	marks = 0;
 	totalmarks = 0;
 }
-Student::Student(string n, string r, int a, long long c, /*Course* co = 0,*/ char* att, int* m, int t, string code)
+Student::Student(string n, string r, int a, long long c, char* att, int* m, int t, int t1 ,string code)
 {
 	name = n;
 	roll_num = r;
 	age = a;
 	contact = c;
-	//courses = co;
 	attendance = att;
 	totalAttendance = t;
 	marks = m;
+	totalmarks = t1;
 	string f = code + roll_num + ".txt";
 	FileHandler fin;
+	fin.open(f, ios::out);
+	fin.close();
+	f = code + roll_num + "M.txt";
 	fin.open(f, ios::out);
 	fin.close();
 }
@@ -271,8 +291,8 @@ void Course::DisplayStudents()
 		<< name << "\t\t"
 		<< instructor << "\t\t"
 		<< credits << "\t\t"
-		<< capacity << "\t\t\t\n"
-		<< totalStudents << "\n";
+		<< capacity << "\t\t\t\n\n"
+		"Total nummber of Students enrolled : " << totalStudents << "\n\n";
 	for (int i = 0; i < totalStudents; i++)
 	{
 		cout << students[i];
@@ -286,8 +306,11 @@ Course* Course::EditStudentDetail(int t)
 	int len, a, b;
 	bool flag = false;
 	system("cls");
-	cout << "Enter the roll number of student = ";
-	cin >> roll;
+	do
+	{
+		cout << "Enter the Roll number of Student in format(XXL-XXXX) : ";
+		cin >> roll;
+	} while (checkrollnum(roll));
 	for (int i = 0; i < t; i++)
 	{
 		len = temp[i].totalStudents;
@@ -371,8 +394,11 @@ void Course::removeStudent()
 	Student* temp;
 	int len;
 	system("cls");
-	cout << "Enter the roll number of student = ";
-	cin >> roll;
+	do
+	{
+		cout << "Enter the Roll number of Student in format(XXL-XXXX) : ";
+		cin >> roll;
+	} while (checkrollnum(roll));
 	bool flag = false;
 	for (int i = 0; i < totalStudents; i++)
 	{
@@ -386,6 +412,13 @@ void Course::removeStudent()
 			{
 				if (roll == students[j].getrollnum())
 				{
+					const char* filename;
+					string removefile = code + students[j].getrollnum();
+					filename = Help::GetStrFromBuffer(removefile + ".txt");
+					remove(filename);
+					removefile = code + students[j].getrollnum() + "M";
+					filename = Help::GetStrFromBuffer(removefile + ".txt");
+					remove(filename);
 					continue;
 				}
 				else
@@ -402,7 +435,7 @@ void Course::removeStudent()
 	}
 	if (!flag)
 	{
-		cout << "roll num not found!!!\n";
+		cout << "Roll num not found!!!\n";
 	}
 	const char* filename;
 	filename = Help::GetStrFromBuffer(code + ".txt");
@@ -430,20 +463,23 @@ void Course::enrollStudent()
 	int tmp = totalStudents;
 	totalStudents++;
 	string name, roll_num, fname, lname;
-	int age, * y = 0, t = 0;
+	int age, * y = 0, t = 0 , t1 = 0;
 	long long contact;
 	char* a = 0;
 	system("cls");
-	cout << "first name : ";
+	cout << "First name : ";
 	cin >> fname;
-	cout << "last name : ";
+	cout << "Last name : ";
 	cin >> lname;
 	name = fname + " " + lname;
-	cout << "age : ";
+	cout << "Age : ";
 	cin >> age;
-	cout << "roll num : ";
-	cin >> roll_num;
-	cout << "contact : ";
+	do
+	{
+		cout << "Roll num in format(XXL-XXXX) : ";
+		cin >> roll_num;
+	} while (checkrollnum(roll_num));
+	cout << "Contact : ";
 	cin >> contact;
 	if (tmp > 0)
 	{
@@ -452,15 +488,17 @@ void Course::enrollStudent()
 		{
 			temp[i] = students[i];
 		}
-		temp[totalStudents - 1] = Student(name, roll_num, age, contact, a, y, t, code);
+		temp[totalStudents - 1] = Student(name, roll_num, age, contact, a, y, t,t1, code);
 		int kia = temp[0].getTotalattendance();
 		temp[totalStudents - 1].setattendance(kia);
+		int kia1 = temp[0].getTotalmarks();
+		temp[totalStudents - 1].setmarks(kia);
 		delete[] students;
 		students = temp;
 	}
 	else
 	{
-		Student* temp = new Student(name, roll_num, age, contact, a, y, t, code);
+		Student* temp = new Student(name, roll_num, age, contact, a, y, t ,t1 ,code);
 		students = temp;
 	}
 	const char* filename;
@@ -512,23 +550,17 @@ void Course::Availablecourse()
 class System
 {
 private:
-	//student* students;
 	Course* courses;
-	int totalstudents;
 	int totalcourses;
 	int menus;
+	FileHandler fin;
 public:
 	System()
 	{
-		//students = 0;
 		courses = 0;
-		totalstudents = 0;
 		totalcourses = 0;
 		menus = 0;
-		FileHandler fin;
-		//fin.open("students.txt", ios::in);
-		//fin.read(students, totalstudents);
-		//fin.close();
+		fin;
 		fin.open("courses.txt", ios::in);
 		fin.read(courses, totalcourses);
 		fin.close();
@@ -537,27 +569,30 @@ public:
 	{
 	start:
 		system("cls");
-		cout << "\t1 - enroll a student\n";
-		cout << "\t2 - course registration\n";
-		cout << "\t3 - attendance\n";
-		cout << "\t4 - marks\n";
-		cout << "\t5 - course withdraw\n";
-		cout << "\t6 - exit\n";
+		cout << "\t1 - Enroll a student\n";
+		cout << "\t2 - Course Registration\n";
+		cout << "\t3 - Attendance\n";
+		cout << "\t4 - Marks\n";
+		cout << "\t5 - Exit\n";
 		cin >> menus;
-		if (menus > 6 || menus == 0)
+		if (menus > 5 || menus < 0)
 		{
 			system("cls");
-			cout << "invalid input!!\n";
+			cout << "\n\n\t\tInvalid input!!\n";
 			Sleep(3000);
 			goto start;
 		}
-		else if (menus <= 5)
+		else if (menus <= 4)
 		{
 			this->submenu(menus);
 		}
-		else
+		else if (menus == 5)
 		{
-			cout << "Tabinda\n";
+			system("cls");
+			cout << "\n\n\n\t\t\t===================================\n";
+			cout <<       "\t\t\t======= Thank you for using =======\n";
+			cout <<       "\t\t\t===================================\n";
+			cout << "\n\n\n\n\n\"\Teddy\"\n";
 		}
 		Sleep(100);
 	}
@@ -568,16 +603,16 @@ public:
 		system("cls");
 		if (i == 1)
 		{
-			cout << "\t1 - display already enrolled students\n";
-			cout << "\t2 - add a student\n";
-			cout << "\t3 - remove a student\n";
-			cout << "\t4 - edit student detail\n";
+			cout << "\t1 - Display Already Enrolled Students\n";
+			cout << "\t2 - Add a Student\n";
+			cout << "\t3 - Remove a Student\n";
+			cout << "\t4 - Edit Student Detail\n";
 			cout << "\t5 - back\n";
 			cin >> in;
-			if (in > 5 || in == 0)
+			if (in > 5 || in < 0)
 			{
 				system("cls");
-				cout << "invalid input!!\n";
+				cout << "\n\n\t\tInvalid input!!\n";
 				Sleep(3000);
 				goto start;
 			}
@@ -591,8 +626,8 @@ public:
 			}
 			else if (in == 2)
 			{
-				int i = 0;
 			a:
+				int i = 0;
 				system("cls");
 				cout << "\t\"Available course\"\n\n";
 				for (int j = 0; j < totalcourses; j++)
@@ -602,26 +637,26 @@ public:
 				}
 				do
 				{
-					if (i < 0 || i > totalcourses)
+					if (i < 0 || i > totalcourses - 1)
 					{
 						system("cls");
-						cout << "invalid input!!\n";
+						cout << "\n\n\t\tInvalid input!!\n";
 						Sleep(3000);
 						goto a;
 					}
-					cout << "\nin which course you want to add student = ";
+					cout << "\nIn which Course you want to Add Student = ";
 					cin >> i;
-				} while (i < 0 || i > totalcourses);
+				} while (i < 0 || i > totalcourses - 1);
 				courses[i].enrollStudent();
 				Sleep(3000);
 				goto start;
 			}
 			else if (in == 3)
 			{
-				int i = 0;
 			b:
+				int i = 0;
 				system("cls");
-				cout << "\t\"available course\"\n\n";
+				cout << "\t\"Available course\"\n\n";
 				for (int j = 0; j < totalcourses; j++)
 				{
 					cout << "\t" << j << " - ";
@@ -629,16 +664,16 @@ public:
 				}
 				do
 				{
-					if (i < 0 || i > totalcourses)
+					if (i < 0 || i > totalcourses - 1)
 					{
 						system("cls");
-						cout << "invalid input!!\n";
+						cout << "\n\n\t\tInvalid input!!\n";
 						Sleep(3000);
 						goto b;
 					}
-					cout << "\nin which course you want to remove student = ";
+					cout << "\nIn which Course you want to Remove Student = ";
 					cin >> i;
-				} while (i < 0 || i > totalcourses);
+				} while (i < 0 || i > totalcourses - 1);
 				courses[i].removeStudent();
 				Sleep(3000);
 				goto start;
@@ -646,15 +681,6 @@ public:
 			}
 			else if (in == 4)
 			{
-				//	int i = 0;
-				//c:
-				//	system("cls");
-				//	cout << "\t\"available course\"\n\n";
-				//	for (int j = 0; j < totalcourses; j++)
-				//	{
-				//		cout << "\t" << j << " - ";
-				//		courses[j].availablecourse();
-				//	}
 				courses = courses->EditStudentDetail(totalcourses);
 				Sleep(3000);
 				goto start;
@@ -666,14 +692,14 @@ public:
 		}
 		else if (i == 2)
 		{
-			cout << "\t1 - available courses\n";
-			cout << "\t2 - register course\n";
+			cout << "\t1 - Available Courses\n";
+			cout << "\t2 - Register Course\n";
 			cout << "\t3 - back\n";
 			cin >> in;
-			if (in > 3 || in == 0)
+			if (in > 3 || in < 0)
 			{
 				system("cls");
-				cout << "invalid input!!\n";
+				cout << "\n\n\t\tInvalid input!!\n";
 				Sleep(3000);
 				goto start;
 			}
@@ -700,7 +726,6 @@ public:
 				delete[] courses;
 				courses = temp;
 				totalcourses = len;
-				FileHandler fin;
 				remove("courses.txt");
 				fin.open("courses.txt", ios::app);
 				fin << totalcourses;
@@ -729,21 +754,21 @@ public:
 		}
 		else if (i == 3)
 		{
-			cout << "\t1 - display attendance(subject wise)\n";
-			cout << "\t2 - mark attendance.\n";
+			cout << "\t1 - Display Attendance(subject wise)\n";
+			cout << "\t2 - Mark Attendance.\n";
 			cout << "\t3 - back\n";
 			cin >> in;
-			if (in > 3 || in == 0)
+			if (in > 3 || in < 0)
 			{
 				system("cls");
-				cout << "invalid input!!\n";
+				cout << "\n\n\t\tInvalid input!!\n";
 				Sleep(3000);
 				goto start;
 			}
 			else if (in == 1)
 			{
-				int i = 0;
 			c:
+				int i = 0;
 				system("cls");
 				cout << "\t\"Available course\"\n\n";
 				for (int j = 0; j < totalcourses; j++)
@@ -753,24 +778,24 @@ public:
 				}
 				do
 				{
-					if (i < 0 || i > totalcourses)
+					if (i < 0 || i > totalcourses - 1)
 					{
 						system("cls");
-						cout << "invalid input!!\n";
+						cout << "\n\n\t\tInvalid input!!\n";
 						Sleep(3000);
 						goto c;
 					}
-					cout << "\nFor which course you want to display attendance = ";
+					cout << "\nFor which course you want to Display Attendance = ";
 					cin >> i;
-				} while (i < 0 || i > totalcourses);
+				} while (i < 0 || i > totalcourses - 1);
 				courses[i].DisplayAttendance();
 				Sleep(3000);
 				goto start;
 			}
 			else if (in == 2)
 			{
-				int i = 0;
 			d:
+				int i = 0;
 				system("cls");
 				cout << "\t\"Available course\"\n\n";
 				for (int j = 0; j < totalcourses; j++)
@@ -780,16 +805,16 @@ public:
 				}
 				do
 				{
-					if (i < 0 || i > totalcourses)
+					if (i < 0 || i > totalcourses - 1)
 					{
 						system("cls");
 						cout << "invalid input!!\n";
 						Sleep(3000);
 						goto d;
 					}
-					cout << "\nFor which course you want to mark attendance = ";
+					cout << "\nFor which course you want to Mark Attendance = ";
 					cin >> i;
-				} while (i < 0 || i > totalcourses);
+				} while (i < 0 || i > totalcourses - 1);
 				courses[i].MarkAttendance();
 				Sleep(3000);
 				goto start;
@@ -801,14 +826,14 @@ public:
 		}
 		else if (i == 4)
 		{
-			cout << "\t1 - display marks(subject wise)\n";
-			cout << "\t2 - assign marks.\n";
+			cout << "\t1 - Display Marks(subject wise)\n";
+			cout << "\t2 - Assign Marks.\n";
 			cout << "\t3 - back\n";
 			cin >> in;
-			if (in > 3 || in == 0)
+			if (in > 3 || in < 0)
 			{
 				system("cls");
-				cout << "invalid input!!\n";
+				cout << "\n\n\t\tInvalid input!!\n";
 				Sleep(3000);
 				goto start;
 			}
@@ -825,16 +850,16 @@ public:
 				}
 				do
 				{
-					if (i < 0 || i > totalcourses)
+					if (i < 0 || i > totalcourses - 1)
 					{
 						system("cls");
-						cout << "invalid input!!\n";
+						cout << "\n\n\t\tInvalid input!!\n";
 						Sleep(3000);
 						goto e;
 					}
-					cout << "\nFor which course you want to display marks = ";
+					cout << "\nFor which course you want to Display Marks = ";
 					cin >> i;
-				} while (i < 0 || i > totalcourses);
+				} while (i < 0 || i > totalcourses - 1);
 				courses[i].DisplayMarks();
 				Sleep(3000);
 				goto start;
@@ -852,35 +877,17 @@ public:
 				}
 				do
 				{
-					if (i < 0 || i > totalcourses)
+					if (i < 0 || i > totalcourses - 1)
 					{
 						system("cls");
-						cout << "invalid input!!\n";
+						cout << "\n\n\t\tInvalid input!!\n";
 						Sleep(3000);
 						goto f;
 					}
-					cout << "\nFor which course you want to assign marks = ";
+					cout << "\nFor which course you want to Assign Marks = ";
 					cin >> i;
-				} while (i < 0 || i > totalcourses);
+				} while (i < 0 || i > totalcourses - 1);
 				courses[i].AssignMarks();
-				Sleep(3000);
-				goto start;
-			}
-			else if (in == 3)
-			{
-				this->mainmenu();
-			}
-		}
-		else if (i == 5)
-		{
-			cout << "\t1 - enrolled courses\n";
-			cout << "\t2 - drop a course\n";
-			cout << "\t3 - back\n";
-			cin >> in;
-			if (in > 3 || in == 0)
-			{
-				system("cls");
-				cout << "invalid input!!\n";
 				Sleep(3000);
 				goto start;
 			}
@@ -892,14 +899,13 @@ public:
 		Sleep(100);
 	}
 };
-//class validator
-//{
-//private:
-//	student input;
-//
-//};
 int main()
 {
+	system("cls");
+	cout << "\n\n\n\t\t\t===================================\n";
+	cout << "\t\t\t========= Welcome to FLEX =========\n";
+	cout << "\t\t\t===================================\n";
+	Sleep(4000);
 	System s;
 	s.mainmenu();
 	return 0;

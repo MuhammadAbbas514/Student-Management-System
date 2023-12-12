@@ -4,13 +4,13 @@
 #include<string>
 #include<fstream>
 #include"c.h"
-#include"s.h"
+#include"Stu.h"
 using namespace std;
 class FileHandler
 {
 private:
-	//string filename;
-	//ios::openmode mode;
+	string filename;
+	ios::openmode mode;
 	fstream fin;
 public:
 	FileHandler()
@@ -19,29 +19,13 @@ public:
 	}
 	void open(string f, ios::openmode m)
 	{
-		fin.open(f, m);
+		filename = f;
+		mode = m;
+		fin.open(filename, m);
 	}
 	void close()
 	{
 		fin.close();
-	}
-	void read(Student*& obj, int& t)
-	{
-		fin >> t;
-		obj = new Student[t];
-		string name, fname, lname, roll_num;
-		int age;
-		long long contact;
-		for (int i = 0; i < t; i++)
-		{
-			fin >> fname;
-			fin >> lname;
-			name = fname + " " + lname;
-			fin >> age;
-			fin >> roll_num;
-			fin >> contact;
-			obj[i].readfromfile(name, roll_num, age, contact);
-		}
 	}
 	void read(Course*& obj, int& t)
 	{
@@ -106,43 +90,16 @@ public:
 			obj[i].readfromfile(code, name, instructor, credits, capacity, o, T);
 		}
 	}
-	//void operator>>(Student& obj)
-	//{
-	//	fin >> obj.name;
-	//	fin >> obj.age;
-	//	fin >> obj.roll_num;
-	//	fin >> obj.contact;
-	//}
 	template<typename T>
 	void operator<<(T a)
 	{
 		fin << a;
 	}
-	//void operator<<(string n)
-	//{
-	//	fin << n << "\t\t";
-	//}
-	//void operator<<(int a)
-	//{
-	//	fin << a << "\t\t";
-	//}
-	//void operator<<(long long c)
-	//{
-	//	fin << c;
-	//}
 	template<typename T>
 	void operator>>(T& n)
 	{
 		fin >> n;
 	}
-	//void operator>>(int& a)
-	//{
-	//	fin >> a;
-	//}
-	//void operator>>(long long& c)
-	//{
-	//	fin >> c;
-	//}
 	bool operator!()
 	{
 		return (fin.eof() == 0);

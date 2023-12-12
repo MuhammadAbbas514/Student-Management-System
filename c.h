@@ -4,7 +4,7 @@
 #include<iostream>
 #include<Windows.h>
 #include"Filehandler.h"
-#include"s.h";
+#include"Stu.h";
 using namespace std;
 class Course
 {
@@ -16,7 +16,6 @@ private:
 	int capacity;
 	Student* students;
 	int totalStudents;
-	//int totalsession;
 public:
 	friend class FileHandler;
 	Course();
