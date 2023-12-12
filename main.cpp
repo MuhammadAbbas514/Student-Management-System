@@ -308,7 +308,7 @@ Course* Course::EditStudentDetail(int t)
 	system("cls");
 	do
 	{
-		cout << "Enter the Roll number of Student in format(XXL-XXXX) : ";
+		cout << "Enter the Roll number of Student in Format(XXL-XXXX) : ";
 		cin >> roll;
 	} while (checkrollnum(roll));
 	for (int i = 0; i < t; i++)
