@@ -493,6 +493,31 @@ void Course::enrollStudent()
 		temp[totalStudents - 1].setattendance(kia);
 		int kia1 = temp[0].getTotalmarks();
 		temp[totalStudents - 1].setmarks(kia);
+		char* att = temp[totalStudents - 1].getattendance();
+		int* mar = temp[totalStudents - 1].getmarks();
+		const char* filename;
+		string removefile = code + temp[totalStudents - 1].getrollnum();
+		filename = Help::GetStrFromBuffer(removefile + ".txt");
+		fin.open(filename, ios::app);
+		fin << temp[0].getTotalattendance();
+		fin << "\n";
+		for (int i = 0; i < kia; i++)
+		{
+			fin << att[i];
+			fin << "\t";
+		}
+		fin.close();
+		removefile = code + temp[totalStudents - 1].getrollnum() + "M";
+		filename = Help::GetStrFromBuffer(removefile + ".txt");
+		fin.open(filename, ios::app);
+		fin << kia1;
+		fin << "\n";
+		for (int i = 0; i < kia1; i++)
+		{
+			fin << mar[i];
+			fin << "\t";
+		}
+		fin.close();
 		delete[] students;
 		students = temp;
 	}

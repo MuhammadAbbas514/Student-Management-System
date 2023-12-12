@@ -140,6 +140,14 @@ public:
 	{
 		return totalmarks;
 	}
+	char* getattendance()
+	{
+		return attendance;
+	}
+	int* getmarks()
+	{
+		return marks;
+	}
 	void setattendance(int t)
 	{
 		totalAttendance = t;
