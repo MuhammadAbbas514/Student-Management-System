@@ -3,7 +3,7 @@
 #define s_h
 #include<iostream>
 #include"filehandler.h"
-#include"c.h";
+#include"c.h"
 using namespace std;
 class Help
 {

@@ -548,12 +548,14 @@ void Course::enrollStudent()
 }
 void Course::readfromfile(string c, string n, string ins, int cre, int cap, Student* obj, int t)
 {
+	// Assign values to the member variables of the Course object
 	code = c;
 	name = n;
 	instructor = ins;
 	credits = cre;
 	capacity = cap;
 	totalStudents = t;
+	// Check if there are students to read
 	if (t > 0)
 	{
 		students = new Student[t];
@@ -562,6 +564,7 @@ void Course::readfromfile(string c, string n, string ins, int cre, int cap, Stud
 			students[i] = obj[i];
 		}
 	}
+	// If no students, set totalStudents to 0 and 'students' to nullptr
 	else
 	{
 		totalStudents = 0;
@@ -570,8 +573,10 @@ void Course::readfromfile(string c, string n, string ins, int cre, int cap, Stud
 }
 void Course::Availablecourse()
 {
+	// Display the available course information
 	cout << "(" << code << ") - " << name << endl;
 }
+// System class implementation
 class System
 {
 private:
@@ -580,6 +585,7 @@ private:
 	int menus;
 	FileHandler fin;
 public:
+	// Constructor
 	System()
 	{
 		courses = 0;
@@ -590,6 +596,7 @@ public:
 		fin.read(courses, totalcourses);
 		fin.close();
 	}
+	// Initialization of member variables...
 	void mainmenu()
 	{
 	start:
@@ -621,6 +628,7 @@ public:
 		}
 		Sleep(100);
 	}
+	// Submenu method
 	void submenu(int i)
 	{
 		int in;
@@ -628,33 +636,39 @@ public:
 		system("cls");
 		if (i == 1)
 		{
+			// Display options for managing enrolled students
 			cout << "\t1 - Display Already Enrolled Students\n";
 			cout << "\t2 - Add a Student\n";
 			cout << "\t3 - Remove a Student\n";
 			cout << "\t4 - Edit Student Detail\n";
 			cout << "\t5 - back\n";
+			// User input for the submenu
 			cin >> in;
+			// Validate user input
 			if (in > 5 || in < 0)
 			{
+				// Display error message for invalid input
 				system("cls");
 				cout << "\n\n\t\tInvalid input!!\n";
 				Sleep(3000);
-				goto start;
+				goto start; // Jump to the start label to show the submenu again
 			}
 			else if (in == 1)
 			{
+				// Option to display already enrolled students
 				for (int i = 0; i < totalcourses; i++)
 				{
 					courses[i].DisplayStudents();
 				}
-				goto start;
+				goto start;  // Jump to the start label to show the submenu again
 			}
 			else if (in == 2)
 			{
-			a:
+			a: // Label for goto statement
 				int i = 0;
 				system("cls");
 				cout << "\t\"Available course\"\n\n";
+				// Display available courses for user selection
 				for (int j = 0; j < totalcourses; j++)
 				{
 					cout << "\t" << j << " - ";
@@ -662,19 +676,24 @@ public:
 				}
 				do
 				{
+					// Validate user input for the course selection
 					if (i < 0 || i > totalcourses - 1)
 					{
 						system("cls");
 						cout << "\n\n\t\tInvalid input!!\n";
 						Sleep(3000);
-						goto a;
+						goto a; // Jump to label 'a' in case of invalid input
 					}
+
+					// User input for the course where the student will be added
 					cout << "\nIn which Course you want to Add Student = ";
 					cin >> i;
 				} while (i < 0 || i > totalcourses - 1);
+
+				// Enroll a student in the selected course
 				courses[i].enrollStudent();
 				Sleep(3000);
-				goto start;
+				goto start; // Enroll a student in the selected course
 			}
 			else if (in == 3)
 			{
@@ -923,9 +942,20 @@ public:
 		}
 		Sleep(100);
 	}
+	~System()
+	{
+		totalcourses = 0;
+		menus = 0;
+		if (courses)
+		{
+			delete[]courses;
+		}
+	}
 };
+// Main function
 int main()
 {
+	// Display welcome message
 	system("cls");
 	cout << "\n\n\n\t\t\t===================================\n";
 	cout << "\t\t\t========= Welcome to FLEX =========\n";

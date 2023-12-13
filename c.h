@@ -4,7 +4,7 @@
 #include<iostream>
 #include<Windows.h>
 #include"Filehandler.h"
-#include"Stu.h";
+#include"Stu.h"
 using namespace std;
 class Course
 {
